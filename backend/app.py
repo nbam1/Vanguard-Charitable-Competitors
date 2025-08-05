@@ -3,10 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from scrape_website import scrape_website
 from embed_and_store import upsert_website
 from competitor_agent import find_similar_competitors, analyze_competitors
+from serpapi import GoogleSearch
+import os
 
 app = FastAPI()
 
-# CORS setup — adjust for production
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Replace with frontend URL in production
@@ -15,28 +16,59 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("/analyze")
-async def analyze(request: Request):
+@app.post("/search-and-analyze")
+async def search_and_analyze(request: Request):
     data = await request.json()
-    url = data.get("url")
+    user_company_name = data.get("company_name")
+    user_company_description = data.get("company_description")
 
-    if not url:
-        return {"error": "No URL provided."}
+    if not user_company_name or not user_company_description:
+        return {"error": "Missing company_name or company_description."}
 
-    try:
-        # Step 1: Scrape website
-        scraped_text = scrape_website(url)
+    # Step 1: Search for competitor websites using SerpAPI
+    search_query = "top donor advised fund providers"
+    params = {
+        "engine": "google",
+        "q": search_query,
+        "num": 10,
+        "api_key": os.getenv("SERPAPI_KEY")
+    }
 
-        # Step 2: Embed and store it in Pinecone
-        upsert_website(scraped_text, url)
+    search = GoogleSearch(params)
+    results = search.get_dict()
+    organic_results = results.get("organic_results", [])
 
-        # Step 3: Retrieve similar competitors
-        competitors = find_similar_competitors(url)
+    # Step 2: Scrape, embed, and store each competitor
+    for i, result in enumerate(organic_results):
+        url = result.get("link")
+        snippet = result.get("snippet", "")
+        if not url:
+            continue
 
-        # Step 4: Analyze them via OpenAI
-        analysis = analyze_competitors(url, competitors)
+        domain = url.split("//")[-1].split("/")[0]
+        company_id = f"{domain.replace('.', '_')}_{i}"
+        name = domain.replace("www.", "")
 
-        return {"response": analysis}
+        try:
+            upsert_website(company_id, name, url, fallback_summary=snippet)
+        except Exception as e:
+            print(f"Could not upsert {url}: {e}")
 
-    except Exception as e:
-        return {"error": str(e)}
+    # Step 3: Find similar competitors
+    matches = find_similar_competitors(user_company_description)
+
+    # Step 4: Analyze the competitors
+    report = analyze_competitors(user_company_name, matches)
+
+    # Step 5: Return structured result
+    return {
+        "matches": [
+            {
+                "id": m['id'],
+                "score": m['score'],
+                "name": m['metadata']['name'],
+                "description": m['metadata'].get('description', '')
+            } for m in matches
+        ],
+        "report": report
+    }
