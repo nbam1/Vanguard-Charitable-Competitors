@@ -7,19 +7,20 @@ This project was built using Angular. It is an app that uses:
 
 ## Development server
 
-To start a local development server, navigate to the frontend folder and run:
+To start a local development server, navigate to the frontend folder in the terminal and run:
 
 ```bash
 ng serve
 ```
 
-Additionally, to get the backend to run, first open a second terminal, navigate to the backend folder, and run:
+Additionally, to get the backend to run, open a second terminal, navigate to the backend folder, and run:
 
 ```bash
 uvicorn app:ap --reload
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Once the frontend server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files. The backend server will run on http://127.0.0.1:8000, but 
+there is no need to go to the backend server url. It only needs to run properly in the background for the app to function as intended.
 
 ## Building
 
