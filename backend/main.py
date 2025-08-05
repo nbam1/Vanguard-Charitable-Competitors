@@ -1,8 +1,5 @@
 import os
-import requests
-import openai
-import pinecone
-from embed_and_store import upsert_website
+from utils import upsert_from_url
 from competitor_agent import find_similar_competitors, analyze_competitors
 from serpapi import GoogleSearch
 
@@ -29,18 +26,9 @@ results = search.get_dict()
 for i, result in enumerate(results.get("organic_results", [])):
     url = result.get("link")
     snippet = result.get("snippet", "")
-    domain = url.split("//")[-1].split("/")[0]
-    company_id = f"{domain.replace('.', '_')}_{i}"
-    name = domain.replace("www.", "")
-    try:
-        upsert_website(company_id, name, url, fallback_summary=snippet)
-    except (
-        requests.RequestException,
-        openai.OpenAIError,
-        pinecone.core.client.exceptions.PineconeException,
-        ValueError,
-    ) as e:
-        print(f"Could not upsert {url}: {e}")
+    if not url:
+        continue
+    upsert_from_url(url, i, snippet)
 
 # 3. Run your usual analysis pipeline
 matches = find_similar_competitors(user_company_description)

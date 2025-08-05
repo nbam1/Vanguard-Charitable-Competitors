@@ -1,10 +1,7 @@
 import os
-import requests
-import openai
-import pinecone
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from embed_and_store import upsert_website
+from utils import upsert_from_url
 from competitor_agent import find_similar_competitors, analyze_competitors
 from serpapi import GoogleSearch
 
@@ -35,18 +32,12 @@ def process_competitors(organic_results):
         snippet = result.get("snippet", "")
         if not url:
             continue
-        domain = url.split("//")[-1].split("/")[0]
-        company_id = f"{domain.replace('.', '_')}_{i}"
-        name = domain.replace("www.", "")
-        try:
-            upsert_website(company_id, name, url, fallback_summary=snippet)
-        except (
-            requests.RequestException,
-            openai.OpenAIError,
-            pinecone.core.client.exceptions.PineconeException,
-            ValueError,
-        ) as e:
-            print(f"Could not upsert {url}: {e}")
+        for i, result in enumerate(organic_results):
+            url = result.get("link")
+            snippet = result.get("snippet", "")
+            if not url:
+                continue
+            upsert_from_url(url, i, snippet)
 
 @app.post("/search-and-analyze")
 async def search_and_analyze(request: Request):
