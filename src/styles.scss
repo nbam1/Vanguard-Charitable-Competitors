@@ -1,1 +1,154 @@
-/* You can add global styles to this file, and also import other style files */
+$nimbl-blue:   #1595E8;
+$nimbl-night:  #B6C9CF;
+$nimbl-bleach: #000000;
+$nimbl-carbon: #6C8BF7;
+$nimbl-navy:   #1E3D59;
+$nimbl-canvas: #48494E;
+$nimbl-leaf:   #CD9B00;
+$nimbl-juice:  #E6871E;
+$nimbl-fire:   #A34A3A;
+
+@import url('https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap');
+
+$primary-font-stack: "Helvetica Now", "Helvetica Neue", Helvetica, Arial, sans-serif;
+$accent-font-stack: 'Shadows Into Light', cursive;
+
+body {
+  background: $nimbl-bleach;
+  color: $nimbl-blue;
+  font-family: $primary-font-stack;
+  margin: 0;
+  min-height: 100vh;
+  letter-spacing: 0.02em;
+}
+
+h1, h2, h3, .headline {
+  font-family: $primary-font-stack;
+  font-weight: 700;
+  color: $nimbl-blue;
+  letter-spacing: 0.03em;
+}
+
+a {
+  color: $nimbl-carbon;
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+    color: $nimbl-blue;
+  }
+}
+
+.accent, .handwritten, .subtitle {
+  font-family: $accent-font-stack;
+  color: $nimbl-juice;
+  font-size: 1.2rem;
+  letter-spacing: 0.02em;
+}
+
+.container {
+  max-width: 720px;
+  margin: 32px auto;
+  background: $nimbl-night;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(21, 149, 232, 0.09);
+  padding: 2.5rem 2.5rem;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.logo {
+  width: 150px;
+  margin-bottom: 10px;
+}
+
+.analysis-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 32px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+button[mat-raised-button] {
+  border-radius: 22px;
+  font-weight: bold;
+  background: $nimbl-blue;
+  color: #fff;
+  transition: box-shadow 0.2s;
+  box-shadow: 0 2px 8px #1595E877;
+  letter-spacing: 0.04em;
+  &:hover {
+    background: $nimbl-juice;
+    color: #fff;
+  }
+}
+
+.analysis-report {
+  background: #fff;
+  color: $nimbl-navy;
+  border-radius: 12px;
+  padding: 1.2rem;
+  font-family: $primary-font-stack, monospace, monospace;
+  white-space: pre-wrap;
+  box-shadow: 0 1px 3px rgba(21, 149, 232, 0.04);
+  margin-bottom: 2rem;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.2rem;
+  margin-top: 1.5rem;
+}
+
+.competitor-card {
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(21, 149, 232, 0.07);
+}
+
+mat-card-header {
+  padding-bottom: 0;
+}
+
+mat-card-title.company-name {
+  font-family: $primary-font-stack;
+  color: $nimbl-blue;
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
+mat-card-subtitle.score {
+  color: $nimbl-juice;
+  font-weight: 600;
+}
+
+mat-card-content .description {
+  color: $nimbl-canvas;
+  margin-top: 0.5rem;
+  font-size: 0.98rem;
+}
+
+@media (max-width: 800px) {
+  .container {
+    padding: 1.1rem 0.5rem;
+    max-width: 99vw;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  background: $nimbl-night;
+}
+::-webkit-scrollbar-thumb {
+  background: $nimbl-canvas;
+  border-radius: 8px;
+}
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

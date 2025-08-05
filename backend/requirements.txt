@@ -1,0 +1,6 @@
+openai
+pinecone
+requests
+beautifulsoup4
+python-dotenv
+google-search-results
