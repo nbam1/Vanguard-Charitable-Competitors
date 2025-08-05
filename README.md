@@ -5,6 +5,30 @@ This project was built using Angular. It is an app that uses:
  - PineconeAPI : Upserts the companies found into the database and analyzes how similar they are to Vanguard Charitable
  - OpenAI API : Takes the information scraped and generates a detailed and valuable report on the top competitors found. If no data was able to be scraped, then the agent finds any relevant information regarding the company on secondary source websites or news articles to create the report. 
 
+## Installing Dependencies
+
+In order to run the app, make sure you have the following dependencies installed Angular and all of the dependencies listed in the requirements.txt file in the backend folder.
+
+To install Angular run:
+
+```bash
+npm install -g @angular/cli
+```
+
+To install everything in the requirements.txt file, run:
+
+```bash
+pip install -r requirements.txt
+```
+
+or
+
+```bash
+python3 -m pip install -r requirements.txt
+```
+
+Now you have everything necessary to run the app!
+
 ## Development server
 
 To start a local development server, navigate to the frontend folder in the terminal and run:
