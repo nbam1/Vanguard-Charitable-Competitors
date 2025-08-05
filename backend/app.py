@@ -1,6 +1,5 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from scrape_website import scrape_website
 from embed_and_store import upsert_website
 from competitor_agent import find_similar_competitors, analyze_competitors
 from serpapi import GoogleSearch
