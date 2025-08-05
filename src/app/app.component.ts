@@ -7,7 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NgOptimizedImage } from '@angular/common';
-import { NgIf, NgFor, NumberPipe } from '@angular/common';
+import { NgIf, NgFor, DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +20,7 @@ import { NgIf, NgFor, NumberPipe } from '@angular/common';
     MatListModule,
     HttpClientModule,
     NgOptimizedImage,
-    NumberPipe,
+    DecimalPipe,
     NgIf,
     NgFor,
   ],
