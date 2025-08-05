@@ -1,13 +1,13 @@
 import { createRequire } from 'module';const require = createRequire(import.meta.url);
 import {
+  NG_VALUE_ACCESSOR
+} from "./chunk-4LSOM7AI.js";
+import {
   MAT_RIPPLE_GLOBAL_OPTIONS,
   MatRippleModule,
   RippleRenderer,
   _StructuralStylesLoader
 } from "./chunk-S5DKURTU.js";
-import {
-  NG_VALUE_ACCESSOR
-} from "./chunk-4LSOM7AI.js";
 import {
   coerceBooleanProperty
 } from "./chunk-JAVDCDKQ.js";

@@ -7,7 +7,7 @@ This project was built using Angular. It is an app that uses:
 
 ## Development server
 
-To start a local development server, run:
+To start a local development server, navigate to the frontend folder and run:
 
 ```bash
 ng serve

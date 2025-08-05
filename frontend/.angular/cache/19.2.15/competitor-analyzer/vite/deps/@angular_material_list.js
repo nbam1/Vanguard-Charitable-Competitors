@@ -9,7 +9,7 @@ import {
 } from "./chunk-MKI5Y5UW.js";
 import {
   coerceBooleanProperty
-} from "./chunk-JW74SE4J.js";
+} from "./chunk-3PLN7PLU.js";
 import {
   A,
   CdkObserveContent,
