@@ -1,5 +1,7 @@
 # CompetitorAnalyzer
 
+Built by Neil Bam (nbam1) during summer internship at NimblDigital Consulting.
+
 This project was built using Angular. It is an app that uses:
  - SerpAPI : Searches the website for competitor companies and scrapes the websites for relevant information
  - PineconeAPI : Upserts the companies found into the database and analyzes how similar they are to Vanguard Charitable
