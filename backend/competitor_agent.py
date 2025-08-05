@@ -1,6 +1,6 @@
+import os
 import openai
 import pinecone
-import os
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -23,16 +23,22 @@ def find_similar_competitors(description, top_k=5):
     return result["matches"]
 
 def analyze_competitors(user_company_name, competitors):
-    prompt = f"""You are a SaaS market analyst. Analyze the following competitors of '{user_company_name}' and for each one, provide:
-- Danger Rating (1 = not dangerous, 5 = very dangerous)
-- CX strategy
-- Target audience
-- Donor portal UX (e.g., clunky, intuitive)
-- Messaging
-- Cross-selling of financial or charitable services
-- Whether they offer a mobile website or app
-"""
-    context = "\n\n".join([f"{c['metadata']['name']}: {c['metadata']['description']}" for c in competitors])
+    prompt = (
+    f"You are a SaaS market analyst. Analyze the following competitors of "
+    f"'{user_company_name}' and for each one, provide:\n"
+    " - Danger Rating (1 = not dangerous, 5 = very dangerous)\n"
+    " - CX strategy\n"
+    " - Target audience\n"
+    " - Donor portal UX (e.g., clunky, intuitive)\n"
+    " - Messaging\n"
+    " - Cross-selling of financial or charitable services\n"
+    " - Whether they offer a mobile website or app\n"
+)
+    lines = [
+        f"{c['metadata']['name']}: {c['metadata']['description']}"
+        for c in competitors
+    ]
+    context = "\n\n".join(lines)
     messages = [
         {"role": "system", "content": "You are a helpful competitor analysis agent."},
         {"role": "user", "content": prompt + "\n\n" + context}

@@ -1,9 +1,12 @@
+import os
+import requests
+import openai
+import pinecone
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from embed_and_store import upsert_website
 from competitor_agent import find_similar_competitors, analyze_competitors
 from serpapi import GoogleSearch
-import os
 
 app = FastAPI()
 
@@ -50,7 +53,12 @@ async def search_and_analyze(request: Request):
 
         try:
             upsert_website(company_id, name, url, fallback_summary=snippet)
-        except Exception as e:
+        except (
+            requests.RequestException,
+            openai.OpenAIError,
+            pinecone.core.client.exceptions.PineconeException,
+            ValueError,
+        ) as e:
             print(f"Could not upsert {url}: {e}")
 
     # Step 3: Find similar competitors

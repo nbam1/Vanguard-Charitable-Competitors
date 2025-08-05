@@ -1,4 +1,5 @@
 import os
+import requests
 import openai
 import pinecone
 from dotenv import load_dotenv
@@ -16,7 +17,7 @@ def embed_text(text):
 def upsert_website(company_id, name, url, fallback_summary=None):
     try:
         scraped = scrape_website(url)
-    except Exception as e:
+    except (requests.RequestException, ValueError) as e:
         print(f"Scraping failed for {url}: {e}")
         scraped = ""
     # Use fallback if scraping failed or result is too short
@@ -26,7 +27,10 @@ def upsert_website(company_id, name, url, fallback_summary=None):
             content = fallback_summary
         else:
             # Last resort: Use GPT to synthesize a summary
-            prompt = f"Summarize what '{name}' does in the donor-advised fund or charitable sector. Mention likely user experience, target audience, and key services."
+            prompt = (
+                f"Summarize what '{name}' does in the donor-advised fund or charitable sector. "
+                "Mention likely user experience, target audience, and key services."
+            )
             response = client.chat.completions.create(
                 model="gpt-4o",
                 messages=[{"role": "user", "content": prompt}]

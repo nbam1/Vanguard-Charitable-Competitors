@@ -1,12 +1,18 @@
+import os
+import requests
+import openai
+import pinecone
 from embed_and_store import upsert_website
 from competitor_agent import find_similar_competitors, analyze_competitors
 from serpapi import GoogleSearch
-import os
 
 print("Loaded OpenAI Key:", os.getenv("OPENAI_API_KEY"))
 
 user_company_name = "Vanguard Charitable"
-user_company_description = "A leading sponsor of donor-advised funds focused on philanthropic giving with a user-friendly digital experience."
+user_company_description = (
+    "A leading sponsor of donor-advised funds focused on philanthropic giving "
+    "with a user-friendly digital experience."
+)
 
 search_query = "top donor advised fund providers"
 candidate_results = []
@@ -28,7 +34,12 @@ for i, result in enumerate(results.get("organic_results", [])):
     name = domain.replace("www.", "")
     try:
         upsert_website(company_id, name, url, fallback_summary=snippet)
-    except Exception as e:
+    except (
+        requests.RequestException,
+        openai.OpenAIError,
+        pinecone.core.client.exceptions.PineconeException,
+        ValueError,
+    ) as e:
         print(f"Could not upsert {url}: {e}")
 
 # 3. Run your usual analysis pipeline

@@ -1,6 +1,6 @@
+import re
 import requests
 from bs4 import BeautifulSoup
-import re
 
 def clean_text(text):
     return re.sub(r'\s+', ' ', text).strip()
