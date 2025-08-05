@@ -2,7 +2,7 @@
 
 Built by Neil Bam (nbam1) during summer internship at NimblDigital Consulting.
 
-This project was built using Angular. It is an app that uses:
+This app was built using Angular. The backend for the project uses:
  - SerpAPI : Searches the website for competitor companies and scrapes the websites for relevant information
  - PineconeAPI : Upserts the companies found into the database and analyzes how similar they are to Vanguard Charitable
  - OpenAI API : Takes the information scraped and generates a detailed and valuable report on the top competitors found. If no data was able to be scraped, then the agent finds any relevant information regarding the company on secondary source websites or news articles to create the report. 
@@ -45,7 +45,7 @@ Additionally, to get the backend to run, open a second terminal, navigate to the
 uvicorn app:ap --reload
 ```
 
-Once the frontend server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files. The backend server will run on http://127.0.0.1:8000, but 
+Once the frontend server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files. The backend server will run on `http://127.0.0.1:8000/`, but 
 there is no need to go to the backend server url. It only needs to run properly in the background for the app to function as intended.
 
 ## Building
