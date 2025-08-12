@@ -46,6 +46,13 @@ async def search_and_analyze(request: Request) -> Dict[str, Any]:
     data = await request.json()
     company_name = data.get("company_name")
     company_desc = data.get("company_description")
+    # Allow the frontend to control how many competitors to retrieve
+    try:
+        top_k = int(data.get("top_k", 10))
+    except (TypeError, ValueError):
+        top_k = 10
+    # clamp to a safe range
+    top_k = max(1, min(top_k, 50))
 
     if not company_name or not company_desc:
         return {"error": "Missing company_name or company_description."}
@@ -73,7 +80,7 @@ async def search_and_analyze(request: Request) -> Dict[str, Any]:
             )
 
     # 3) Retrieve similar
-    matches = find_similar_competitors(company_desc)
+    matches = find_similar_competitors(company_desc, top_k=top_k)
 
     # 4) Analyze with LLM
     report = analyze_competitors(company_name, matches)

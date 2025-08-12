@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, computed, signal, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms'; // +Validators
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -42,6 +42,19 @@ import { DecimalPipe } from '@angular/common';
         <textarea matInput formControlName="company_description" rows="3" required></textarea>
       </mat-form-field>
 
+      <mat-form-field appearance="outline">
+        <mat-label># of competitors</mat-label>
+        <input
+          matInput
+          type="number"
+          formControlName="top_k"
+          min="1"
+          max="50"
+          step="1"
+          placeholder="10">
+        <mat-hint>1–50 (defaults to 10)</mat-hint>
+      </mat-form-field>
+
       <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || loading()">
         {{ loading() ? "Analyzing..." : "Analyze Competitors" }}
       </button>
@@ -56,7 +69,7 @@ import { DecimalPipe } from '@angular/common';
 
     @if (matches().length) {
       <section>
-        <h3>Top Matches</h3>
+        <h3>Top Matches ({{ matches().length }})</h3>
         <div class="card-grid">
           @for (match of matches(); track match.id) {
             <mat-card class="competitor-card">
@@ -80,8 +93,9 @@ export class AppComponent {
   private http = inject(HttpClient);
 
   form = this.fb.group({
-    company_name: [''],
-    company_description: ['']
+    company_name: ['', Validators.required],
+    company_description: ['', Validators.required],
+    top_k: [10, [Validators.min(1), Validators.max(50)]], // new control
   });
 
   loading = signal(false);
@@ -93,18 +107,24 @@ export class AppComponent {
     this.loading.set(true);
     this.report.set(null);
     this.matches.set([]);
-    const { company_name, company_description } = this.form.value;
-    this.http.post<any>('http://localhost:8000/search-and-analyze', { company_name, company_description })
-      .subscribe({
-        next: result => {
-          this.report.set(result.report);
-          this.matches.set(result.matches ?? []);
-          this.loading.set(false);
-        },
-        error: err => {
-          this.loading.set(false);
-          alert('Error: ' + (err.error?.detail || err.message));
-        }
-      });
+
+    const { company_name, company_description, top_k } = this.form.value;
+
+    this.http.post<any>('http://localhost:8000/search-and-analyze', {
+      company_name,
+      company_description,
+      top_k: Number(top_k) || 10, // ensure numeric
+    })
+    .subscribe({
+      next: result => {
+        this.report.set(result.report);
+        this.matches.set(result.matches ?? []);
+        this.loading.set(false);
+      },
+      error: err => {
+        this.loading.set(false);
+        alert('Error: ' + (err.error?.detail || err.message));
+      }
+    });
   }
 }
