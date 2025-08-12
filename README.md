@@ -43,7 +43,7 @@ ng serve
 Additionally, to get the backend to run, open a second terminal, navigate to the backend folder, and run:
 
 ```bash
-uvicorn app:ap --reload
+uvicorn app:app --reload
 ```
 
 Once the frontend server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files. The backend server will run on `http://127.0.0.1:8000/`, but 
