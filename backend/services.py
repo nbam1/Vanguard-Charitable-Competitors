@@ -1,18 +1,18 @@
 from __future__ import annotations
 
-from typing import Optional, Dict
+from typing import Dict, Optional
 
-import requests
 import openai
 import pinecone
-
+import requests
 from embed_and_store import upsert_website
 from utils import canonicalize_url, make_company_id
 
 
 # Try to import Pinecone's base exception in a version-agnostic way.
 try:
-    from pinecone.exceptions import PineconeException as _PineconeError  # type: ignore
+    from pinecone.exceptions import \
+      PineconeException as _PineconeError  # type: ignore
 except ImportError:
     class _PineconeError(Exception):  # type: ignore
         """Fallback Pinecone exception base class."""

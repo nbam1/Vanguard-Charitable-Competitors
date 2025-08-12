@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
 from common import CLIENT, INDEX
+from utils import fetch_company_info
 
 
 def get_embedding(text: str, model: str = "text-embedding-3-small") -> list[float]:
@@ -15,33 +16,6 @@ def find_similar_competitors(description: str, top_k: int = 5) -> List[Dict[str,
     result = INDEX.query(vector=query_vec, top_k=top_k, include_metadata=True)
     matches = result.get("matches") if isinstance(result, dict) else getattr(result, "matches", [])
     return matches or []
-
-
-def fetch_extra_info(company_name: str) -> str:
-    """
-    Fetch supplemental competitor information from Wikipedia or news sources
-    using SerpAPI.
-
-    Args:
-        company_name: The name of the company to search for.
-
-    Returns:
-        A string containing concatenated snippets from search results.
-    """
-    try:
-        params = {
-            "engine": "google",
-            "q": f"{company_name} site:wikipedia.org OR news",
-            "num": 5,
-            "api_key": os.getenv("SERPAPI_KEY"),
-        }
-        search = GoogleSearch(params)
-        results = search.get_dict().get("organic_results", [])
-        snippets = [r["snippet"] for r in results if r.get("snippet")]
-        return " ".join(snippets)
-    except Exception as exc:  # pylint: disable=broad-except
-        print(f"Extra info search failed for {company_name}: {exc}")
-        return ""
 
 
 def analyze_competitors(
@@ -69,7 +43,7 @@ def analyze_competitors(
         description = match["metadata"].get("description", "").strip()
 
         if not description or len(description.split()) < 80:
-            extra_info = fetch_extra_info(name)
+            extra_info = fetch_company_info(name)
             if extra_info:
                 description = (
                     f"{description}\n\n"

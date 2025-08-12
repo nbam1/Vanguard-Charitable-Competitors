@@ -1,18 +1,17 @@
 from __future__ import annotations
 
-import os
 import asyncio
-from typing import List, Dict, Any
+import os
+from typing import Any, Dict, List
 
+from common import INDEX  # same Index instance
+from competitor_agent import analyze_competitors, find_similar_competitors
+from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
 from serpapi import GoogleSearch
-
-from competitor_agent import find_similar_competitors, analyze_competitors
-from common import INDEX  # same Index instance
-from utils import canonicalize_url
 from services import upsert_from_url
+from utils import canonicalize_url
 
 load_dotenv()
 

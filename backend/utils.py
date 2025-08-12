@@ -1,14 +1,17 @@
 from __future__ import annotations
 
-from urllib.parse import urlparse
 import hashlib
+import os
+from urllib.parse import urlparse
 
 import pinecone
+from serpapi import GoogleSearch
 
 
 # Try to import Pinecone's base exception in a version-agnostic way.
 try:
-    from pinecone.exceptions import PineconeException as _PineconeError  # type: ignore
+    from pinecone.exceptions import \
+      PineconeException as _PineconeError  # type: ignore
 except ImportError:  # narrow, no broad-except
     class _PineconeError(Exception):  # type: ignore
         """Fallback Pinecone exception base class."""
@@ -51,3 +54,22 @@ def vector_exists(index: pinecone.Index, vector_id: str) -> bool:
         return vector_id in (vectors or {})
     except (TypeError, KeyError, AttributeError):
         return False
+
+
+def fetch_company_info(company_name: str) -> str:
+    """Fetch supplemental company info from Wikipedia/news via SerpAPI."""
+    try:
+        params = {
+            "engine": "google",
+            "q": f"{company_name} site:wikipedia.org OR news",
+            "num": 5,
+            "api_key": os.getenv("SERPAPI_KEY"),
+        }
+        search = GoogleSearch(params)
+        results = search.get_dict().get("organic_results", [])
+        snippets = [r["snippet"] for r in results if r.get("snippet")]
+        return " ".join(snippets)
+    except Exception as exc:  # pylint: disable=broad-except
+        print(f"Extra info search failed for {company_name}: {exc}")
+        return ""
+    

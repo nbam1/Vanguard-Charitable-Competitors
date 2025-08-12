@@ -1,9 +1,12 @@
 import re
+
 import requests
 from bs4 import BeautifulSoup
 
+
 def clean_text(text):
     return re.sub(r'\s+', ' ', text).strip()
+
 
 def scrape_website(url, max_chars=5000):
     response = requests.get(url, timeout=10)

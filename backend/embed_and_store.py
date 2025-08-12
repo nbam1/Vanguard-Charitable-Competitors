@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-from typing import Optional, Dict
+from typing import Dict, Optional
 
-import requests
 import pinecone
-
-from common import CLIENT  # single source of truth
+import requests
+from common import CLIENT
 from scrape_website import scrape_website
-from utils import vector_exists
+from utils import fetch_company_info, vector_exists
 
 
 def embed_text(text: str) -> list[float]:
@@ -17,27 +16,6 @@ def embed_text(text: str) -> list[float]:
         input=[text],
     )
     return resp.data[0].embedding
-
-
-def fetch_additional_info(company_name: str) -> str:
-    """Search for Wikipedia, news, and other sources for the company."""
-    try:
-        params = {
-            "engine": "google",
-            "q": f"{company_name} site:wikipedia.org OR news",
-            "num": 5,
-            "api_key": os.getenv("SERPAPI_KEY"),
-        }
-        search = GoogleSearch(params)
-        results = search.get_dict().get("organic_results", [])
-        snippets = []
-        for r in results:
-            if r.get("snippet"):
-                snippets.append(r["snippet"])
-        return " ".join(snippets)
-    except Exception as e:
-        print(f"Extra info search failed for {company_name}: {e}")
-        return ""
 
 
 def upsert_website(
@@ -63,7 +41,7 @@ def upsert_website(
 
     # If still too short, fetch Wikipedia/news data
     if not content or len(content) < 500:
-        extra_info = fetch_additional_info(name)
+        extra_info = fetch_company_info(name)
         if extra_info:
             content += "\n\n" + extra_info
 
