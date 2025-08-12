@@ -1,17 +1,28 @@
 from __future__ import annotations
 
 from urllib.parse import urlparse
+from typing import Optional, Dict
 import hashlib
+
 import requests
 import openai
 import pinecone
-from typing import Optional, Dict
 
 from embed_and_store import upsert_website  # uses deterministic ID inside
 
 
+# Try to import Pinecone's base exception in a version-agnostic way.
+try:
+    # Newer SDKs expose this directly.
+    from pinecone.exceptions import PineconeException as _PineconeError  # type: ignore
+except Exception:  # pylint: disable=broad-except
+    # Fallback so type checking still works if the import path changes.
+    class _PineconeError(Exception):  # type: ignore
+        """Fallback Pinecone exception base class."""
+
+
 def canonicalize_url(url: str) -> str:
-    """Normalize URL -> canonical host (lowercased, no www)."""
+    """Normalize URL -> canonical host (lowercased, no leading 'www.')."""
     parsed = urlparse(url.strip())
     host = (parsed.netloc or parsed.path).lower()
     if host.startswith("www."):
@@ -20,7 +31,7 @@ def canonicalize_url(url: str) -> str:
 
 
 def make_company_id(url: str) -> str:
-    """Deterministic vector ID derived from canonical host."""
+    """Deterministic vector ID derived from the canonical host."""
     host = canonicalize_url(url)
     return f"site::{host.replace('.', '_')}"
 
@@ -31,27 +42,33 @@ def hash_key(s: str, length: int = 16) -> str:
 
 
 def vector_exists(index: pinecone.Index, vector_id: str) -> bool:
-    """Check if a vector ID already exists in Pinecone (v3 fetch)."""
+    """Return True if a vector ID already exists in Pinecone (v3 fetch)."""
     try:
         res = index.fetch(ids=[vector_id])
-        # SDK can return an object or dict; handle both
-        vecs = getattr(res, "vectors", None) or res.get("vectors", {})
-        return vector_id in vecs
-    except Exception:
-        # On transient errors, be conservative: treat as not existing
+    except _PineconeError:
+        # Treat transient Pinecone errors as "not found" to avoid blocking progress.
+        return False
+
+    # SDK may return object-like or dict-like; support both.
+    vectors = getattr(res, "vectors", None)
+    if vectors is None and isinstance(res, dict):
+        vectors = res.get("vectors", {})
+
+    try:
+        return vector_id in (vectors or {})
+    except (TypeError, KeyError, AttributeError):
         return False
 
 
 def upsert_from_url(
     index: pinecone.Index,
     url: str,
-    i: int,
     snippet: str = "",
     name: Optional[str] = None,
     extra_metadata: Optional[Dict[str, str]] = None,
 ) -> None:
     """
-    Build stable ID + friendly name from URL, then upsert once.
+    Build a stable ID + friendly name from URL, then upsert once.
     Any errors are narrowed and logged (pylint-friendly).
     """
     domain = canonicalize_url(url)
@@ -65,12 +82,12 @@ def upsert_from_url(
             company_id=company_id,
             name=display_name,
             fallback_summary=snippet,
-            extra_metadata=extra_metadata or {"domain": domain},
+            extra_metadata=(extra_metadata or {"domain": domain}),
         )
     except (
         requests.RequestException,
         openai.OpenAIError,
-        pinecone.core.client.exceptions.PineconeException,
+        _PineconeError,
         ValueError,
         KeyError,
         TypeError,

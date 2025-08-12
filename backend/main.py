@@ -8,7 +8,12 @@ from utils import upsert_from_url
 
 def seed_once(urls: List[str]) -> None:
     for i, url in enumerate(urls):
-        upsert_from_url(INDEX, url, i, snippet="", extra_metadata={"source": "manual"})
+        upsert_from_url(
+            INDEX,
+            url,
+            snippet="",
+            extra_metadata={"source": "manual", "position": i},
+        )
 
 
 if __name__ == "__main__":

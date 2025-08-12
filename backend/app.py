@@ -9,8 +9,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from serpapi import GoogleSearch
 
-import pinecone
-
 from competitor_agent import find_similar_competitors, analyze_competitors
 from embed_and_store import INDEX  # same Index instance
 from utils import canonicalize_url, upsert_from_url
@@ -67,13 +65,11 @@ async def search_and_analyze(request: Request) -> Dict[str, Any]:
                 continue
             _SEEN_HOSTS.add(host)
 
-            # deterministic ID inside upsert
             upsert_from_url(
                 index=INDEX,
                 url=url,
-                i=i,
                 snippet=snippet,
-                extra_metadata={"source": "serpapi"},
+                extra_metadata={"source": "serpapi", "rank": i},
             )
 
     # 3) Retrieve similar
