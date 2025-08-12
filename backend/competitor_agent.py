@@ -11,7 +11,7 @@ def get_embedding(text: str, model: str = "text-embedding-3-small") -> list[floa
     return resp.data[0].embedding
 
 
-def find_similar_competitors(description: str, top_k: int = 5) -> List[Dict[str, Any]]:
+def find_similar_competitors(description: str, top_k: int = 15) -> List[Dict[str, Any]]:
     query_vec = get_embedding(description)
     result = INDEX.query(vector=query_vec, top_k=top_k, include_metadata=True)
     matches = result.get("matches") if isinstance(result, dict) else getattr(result, "matches", [])
