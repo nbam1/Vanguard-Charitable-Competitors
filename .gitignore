@@ -3,6 +3,9 @@
 # Environment and secret config files
 .env
 
+#__pycache__
+/__pycache__
+
 # Compiled output
 /dist
 /tmp
