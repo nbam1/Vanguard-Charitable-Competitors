@@ -5,6 +5,11 @@ import {
   ɵɵdefineNgModule
 } from "./chunk-BS6OOEZP.js";
 
+// node_modules/@angular/cdk/fesm2022/boolean-property-DaaVhX5A.mjs
+function coerceBooleanProperty(value) {
+  return value != null && `${value}` !== "false";
+}
+
 // node_modules/@angular/cdk/fesm2022/scrolling-BkvA05C8.mjs
 var RtlScrollAxisType;
 (function(RtlScrollAxisType2) {
@@ -74,13 +79,8 @@ function getSupportedInputTypes() {
   return supportedInputTypes;
 }
 
-// node_modules/@angular/cdk/fesm2022/boolean-property-DaaVhX5A.mjs
-function coerceBooleanProperty(value) {
-  return value != null && `${value}` !== "false";
-}
-
 export {
-  getSupportedInputTypes,
-  coerceBooleanProperty
+  coerceBooleanProperty,
+  getSupportedInputTypes
 };
-//# sourceMappingURL=chunk-3PLN7PLU.js.map
+//# sourceMappingURL=chunk-JW74SE4J.js.map

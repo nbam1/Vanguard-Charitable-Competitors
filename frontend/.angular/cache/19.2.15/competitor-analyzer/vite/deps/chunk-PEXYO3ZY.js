@@ -1,13 +1,13 @@
 import {
-  BidiModule
-} from "./chunk-IPDKWIMN.js";
-import {
   Platform,
   _CdkPrivateStyleLoader,
   _bindEventWithOptions,
   coerceElement,
   coerceNumberProperty
 } from "./chunk-MMDDNL4D.js";
+import {
+  BidiModule
+} from "./chunk-IPDKWIMN.js";
 import {
   DOCUMENT
 } from "./chunk-VVNQSGPF.js";
@@ -3129,4 +3129,4 @@ export {
   FocusKeyManager,
   MatCommonModule
 };
-//# sourceMappingURL=chunk-AIUIJZCC.js.map
+//# sourceMappingURL=chunk-PEXYO3ZY.js.map

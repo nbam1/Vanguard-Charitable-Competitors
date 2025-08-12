@@ -1,8 +1,5 @@
 import { createRequire } from 'module';const require = createRequire(import.meta.url);
 import {
-  NG_VALUE_ACCESSOR
-} from "./chunk-4LSOM7AI.js";
-import {
   MAT_RIPPLE_GLOBAL_OPTIONS,
   MatRippleModule,
   RippleRenderer,
@@ -28,6 +25,9 @@ import {
   _CdkPrivateStyleLoader,
   coerceNumberProperty
 } from "./chunk-MYUFRSAU.js";
+import {
+  NG_VALUE_ACCESSOR
+} from "./chunk-4LSOM7AI.js";
 import {
   NgTemplateOutlet
 } from "./chunk-XKU4W7O3.js";
