@@ -1,22 +1,16 @@
 from __future__ import annotations
 
 from urllib.parse import urlparse
-from typing import Optional, Dict
+from typing import Optional, Dict  # noqa: F401 (kept for future typed helpers)
 import hashlib
 
-import requests
-import openai
 import pinecone
-
-from embed_and_store import upsert_website  # uses deterministic ID inside
 
 
 # Try to import Pinecone's base exception in a version-agnostic way.
 try:
-    # Newer SDKs expose this directly.
     from pinecone.exceptions import PineconeException as _PineconeError  # type: ignore
-except Exception:  # pylint: disable=broad-except
-    # Fallback so type checking still works if the import path changes.
+except ImportError:  # narrow, no broad-except
     class _PineconeError(Exception):  # type: ignore
         """Fallback Pinecone exception base class."""
 
@@ -58,38 +52,3 @@ def vector_exists(index: pinecone.Index, vector_id: str) -> bool:
         return vector_id in (vectors or {})
     except (TypeError, KeyError, AttributeError):
         return False
-
-
-def upsert_from_url(
-    index: pinecone.Index,
-    url: str,
-    snippet: str = "",
-    name: Optional[str] = None,
-    extra_metadata: Optional[Dict[str, str]] = None,
-) -> None:
-    """
-    Build a stable ID + friendly name from URL, then upsert once.
-    Any errors are narrowed and logged (pylint-friendly).
-    """
-    domain = canonicalize_url(url)
-    company_id = make_company_id(url)
-    display_name = name or domain
-
-    try:
-        upsert_website(
-            index=index,
-            url=url,
-            company_id=company_id,
-            name=display_name,
-            fallback_summary=snippet,
-            extra_metadata=(extra_metadata or {"domain": domain}),
-        )
-    except (
-        requests.RequestException,
-        openai.OpenAIError,
-        _PineconeError,
-        ValueError,
-        KeyError,
-        TypeError,
-    ) as exc:
-        print(f"Could not upsert {url} ({company_id}): {exc}")

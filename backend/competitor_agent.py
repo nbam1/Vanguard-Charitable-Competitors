@@ -1,21 +1,8 @@
 from __future__ import annotations
 
-import os
 from typing import List, Dict, Any
 
-import openai
-import pinecone
-from dotenv import load_dotenv
-
-load_dotenv()
-
-CLIENT = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-PC = pinecone.Pinecone(
-    api_key=os.getenv("PINECONE_API_KEY"),
-    environment=os.getenv("PINECONE_ENV"),
-)
-INDEX_NAME = os.getenv("PINECONE_INDEX", "index2")
-INDEX = PC.Index(INDEX_NAME)
+from common import CLIENT, INDEX
 
 
 def get_embedding(text: str, model: str = "text-embedding-3-small") -> list[float]:
@@ -26,7 +13,6 @@ def get_embedding(text: str, model: str = "text-embedding-3-small") -> list[floa
 def find_similar_competitors(description: str, top_k: int = 5) -> List[Dict[str, Any]]:
     query_vec = get_embedding(description)
     result = INDEX.query(vector=query_vec, top_k=top_k, include_metadata=True)
-    # SDK may return dict-like; normalize
     matches = result.get("matches") if isinstance(result, dict) else getattr(result, "matches", [])
     return matches or []
 

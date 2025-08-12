@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import List
 
-from embed_and_store import INDEX
-from utils import upsert_from_url
+from common import INDEX
+from services import upsert_from_url
 
 
 def seed_once(urls: List[str]) -> None:

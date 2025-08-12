@@ -1,29 +1,13 @@
 from __future__ import annotations
 
-import os
 from typing import Optional, Dict
 
-import openai
+import requests
 import pinecone
-from dotenv import load_dotenv
 
+from common import CLIENT, INDEX  # single source of truth
 from scrape_website import scrape_website
 from utils import vector_exists
-
-load_dotenv()
-
-# OpenAI client (modern)
-CLIENT = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-# Pinecone client + index (v3+); ensure your env and index name are correct
-PC = pinecone.Pinecone(
-    api_key=os.getenv("PINECONE_API_KEY"),
-    environment=os.getenv("PINECONE_ENV"),
-)
-
-# Use your existing index name here (must be created ahead of time with dim=1536)
-INDEX_NAME = os.getenv("PINECONE_INDEX", "index2")
-INDEX = PC.Index(INDEX_NAME)
 
 
 def embed_text(text: str) -> list[float]:
@@ -52,14 +36,17 @@ def upsert_website(
         print(f"Skip (exists): {url} -> {company_id}")
         return
 
-    # Try to scrape the page; fall back to snippet if scraping fails/empty
-    scraped = ""
+    # Try to scrape the page; fall back to snippet if scraping fails/empty.
+    content = fallback_summary
     try:
         scraped = scrape_website(url)
-    except Exception as exc:  # narrow if you raise specific errors in scraper
+        if scraped:
+            content = scraped
+    except requests.RequestException as exc:
         print(f"Scrape failed for {url}: {exc}")
 
-    content = scraped or fallback_summary or f"{name} ({url})"
+    if not content:
+        content = f"{name} ({url})"
 
     embedding = embed_text(content)
     metadata = {
@@ -71,12 +58,6 @@ def upsert_website(
         metadata.update(extra_metadata)
 
     index.upsert(
-        vectors=[
-            {
-                "id": company_id,
-                "values": embedding,
-                "metadata": metadata,
-            }
-        ]
+        vectors=[{"id": company_id, "values": embedding, "metadata": metadata}]
     )
     print(f"Upserted {name} ({company_id}) from {url}")
