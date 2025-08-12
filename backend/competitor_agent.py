@@ -18,32 +18,35 @@ def find_similar_competitors(description: str, top_k: int = 5) -> List[Dict[str,
 
 
 def analyze_competitors(user_company_name: str, competitors: List[Dict[str, Any]]) -> str:
+    system_msg = (
+        "You are a precise and analytical SaaS market research assistant. "
+        "Provide structured insights as requested."
+    )
     prompt = (
-        f"You are a SaaS market analyst. Analyze the following competitors of "
-        f"'{user_company_name}' and for each one, provide:\n"
-        "- Danger Rating (1 = not dangerous, 5 = very dangerous)\n"
-        "- CX strategy\n"
+        f"Analyze competitors of '{user_company_name}' on:\n"
+        "- Danger Rating (1 minimal risk — 5 maximum threat)\n"
+        "- Customer Experience (CX) strategy\n"
         "- Target audience\n"
-        "- Donor portal UX (e.g., clunky, intuitive)\n"
-        "- Messaging\n"
-        "- Cross-selling of financial or charitable services\n"
-        "- Whether they offer a mobile website or app\n"
+        "- Donor portal UX (clunky, intuitive, etc.)\n"
+        "- Messaging approach\n"
+        "- Cross-selling of financial/charitable services\n"
+        "- Availability of a mobile website or app\n"
+    )
+    context = "\n\n".join(
+        f"{m['metadata'].get('name', m['id'])}: {m['metadata'].get('description', '')}"
+        for m in competitors
     )
 
-    lines = [
-        f"{m['metadata'].get('name', m.get('id'))}: {m['metadata'].get('description', '')}"
-        for m in competitors
-    ]
-    context = "\n\n".join(lines)
-
     messages = [
-        {"role": "system", "content": "You are a helpful competitor analysis agent."},
+        {"role": "system", "content": system_msg},
         {"role": "user", "content": prompt + "\n\n" + context},
     ]
 
     resp = CLIENT.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-5",
         messages=messages,
         temperature=0.3,
+        verbosity="high",          # Get in-depth, audit-ready detail
+        reasoning_effort="medium", # Balanced reasoning—thorough yet focused
     )
     return resp.choices[0].message.content
