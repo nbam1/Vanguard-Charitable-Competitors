@@ -5,7 +5,7 @@ from typing import Optional, Dict
 import requests
 import pinecone
 
-from common import CLIENT, INDEX  # single source of truth
+from common import CLIENT  # single source of truth
 from scrape_website import scrape_website
 from utils import vector_exists
 

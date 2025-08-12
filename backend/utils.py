@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from urllib.parse import urlparse
-from typing import Optional, Dict  # noqa: F401 (kept for future typed helpers)
 import hashlib
 
 import pinecone

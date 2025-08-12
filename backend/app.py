@@ -11,7 +11,8 @@ from serpapi import GoogleSearch
 
 from competitor_agent import find_similar_competitors, analyze_competitors
 from embed_and_store import INDEX  # same Index instance
-from utils import canonicalize_url, upsert_from_url
+from utils import canonicalize_url
+from services import upsert_from_url
 
 load_dotenv()
 
