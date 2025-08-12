@@ -46,7 +46,7 @@ def analyze_competitors(user_company_name: str, competitors: List[Dict[str, Any]
         model="gpt-5",
         messages=messages,
         temperature=0.3,
-        verbosity="high",          # Get in-depth, audit-ready detail
-        reasoning_effort="medium", # Balanced reasoning—thorough yet focused
+        #verbosity="high",
+        #reasoning_effort="medium",
     )
     return resp.choices[0].message.content
