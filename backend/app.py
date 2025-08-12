@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from serpapi import GoogleSearch
 
 from competitor_agent import find_similar_competitors, analyze_competitors
-from embed_and_store import INDEX  # same Index instance
+from common import INDEX  # same Index instance
 from utils import canonicalize_url
 from services import upsert_from_url
 
