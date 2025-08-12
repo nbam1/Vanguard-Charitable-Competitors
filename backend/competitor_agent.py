@@ -43,7 +43,7 @@ def analyze_competitors(user_company_name: str, competitors: List[Dict[str, Any]
     ]
 
     resp = CLIENT.chat.completions.create(
-        model="gpt-4o"
+        model="gpt-4o",
         #model="gpt-5",
         messages=messages,
         temperature=0.3,
