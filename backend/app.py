@@ -86,15 +86,5 @@ async def search_and_analyze(request: Request) -> Dict[str, Any]:
     report = analyze_competitors(company_name, matches)
 
     return {
-        "matches": [
-            {
-                "id": m["id"],
-                "score": m["score"],
-                "name": m["metadata"].get("name", m["id"]),
-                "description": m["metadata"].get("description", ""),
-                "url": m["metadata"].get("url", ""),
-            }
-            for m in matches
-        ],
         "report": report,
     }
