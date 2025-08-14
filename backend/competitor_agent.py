@@ -81,7 +81,7 @@ def analyze_competitors(
     ]
 
     resp = CLIENT.chat.completions.create(
-        model="gpt-4o",  # or "gpt-5" if desired
+        model="gpt-5",
         messages=messages,
     )
     return resp.choices[0].message.content
